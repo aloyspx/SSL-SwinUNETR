@@ -36,6 +36,12 @@ def process_image(ct_filename, in_dir, brain_dir, out_dir):
     ct_path = os.path.join(in_dir, ct_filename)
     ct_image = sitk.ReadImage(ct_path)
 
+    # Brain strip
+    brain_path = os.path.join(brain_dir,
+                              os.path.splitext(os.path.basename(ct_filename))[0].replace(".nii", "") + "/brain.nii.gz")
+    brain_seg = sitk.ReadImage(brain_path)
+    ct_image[brain_seg == 0] = -1000
+
     ct_resampled_image = resample_image(ct_image, [0.5, 0.5, 5.0])
 
     ct_hu_min, ct_hu_max = 0, 80
